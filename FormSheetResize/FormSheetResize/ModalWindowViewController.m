@@ -10,6 +10,7 @@
 
 @interface ModalWindowViewController ()
 @property bool minimised;
+@property bool isInitialViewLoadLayout;
 @end
 
 #define is_iOS8 ([[[UIDevice currentDevice] systemVersion]floatValue] >= 8)
@@ -21,16 +22,27 @@
     // Do any additional setup after loading the view.
 
     self.minimised = YES;
+    self.isInitialViewLoadLayout = YES;
     
     if(is_iOS8)
     {
+        // Set initial size in iOS 8 etc.
         self.preferredContentSize = CGSizeMake(300, 300);
     }
-    else
+}
+
+- (void) viewWillLayoutSubviews
+{
+    if (self.isInitialViewLoadLayout)
     {
-        self.view.superview.bounds = CGRectMake(0, 0, 300, 300);
+        self.isInitialViewLoadLayout = NO;
+        
+        if(!is_iOS8)
+        {
+            // Set initial size in iOS 6,7 etc.
+            self.view.superview.bounds = CGRectMake(0, 0, 300, 300);
+        }
     }
-    
 }
 
 - (IBAction)minMaxTouched:(id)sender
